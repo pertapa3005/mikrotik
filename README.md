@@ -1,2 +1,2 @@
 # mikrotik
-Netwach mikrotik monitoring syster
+Netwach mikrotik monitoring system
