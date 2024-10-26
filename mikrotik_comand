@@ -1,0 +1,31 @@
+/system script add name="check-netwatch-status" source="
+:global botToken "token_bot_telegram";
+:global chatId "chatID_grup_telegram";
+
+# Ambil semua IP yang sedang dimonitor di netwatch
+:local downIps ""
+:local normalIps ""
+:foreach netwatchId in=[/tool netwatch find] do={
+    :local host [/tool netwatch get $netwatchId host];
+    :local status [/tool netwatch get $netwatchId status];
+    :local comment [/tool netwatch get $netwatchId comment];
+    
+    # Jika statusnya 'down', tambahkan ke daftar downIps dengan comment
+    :if ($status = "down") do={
+        :set downIps ($downIps . "Perhatian! IP " . $host . " (" . $comment . ") mengalami down. ");
+    } else={
+        # Jika statusnya 'up', tambahkan ke daftar normalIps dengan comment
+        :set normalIps ($normalIps . "IP " . $host . " (" . $comment . ") terpantau normal. ");
+    }
+}
+
+# Cek kondisi IP yang dipantau dan kirim pesan
+:local message ""
+:if ([:len $downIps] > 0) do={
+    :set message $downIps;
+} else={
+    :set message ("Semua jaringan yang dimonitor Netwatch terpantau normal:\n" . $normalIps);
+}
+
+/tool fetch url=("https://api.telegram.org/bot" . $botToken . "/sendMessage?chat_id=" . $chatId . "&text=" . $message) mode=https keep-result=no;
+"
