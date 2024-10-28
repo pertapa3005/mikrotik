@@ -1,0 +1,25 @@
+#system script
+:global botToken "token_api_Anda";
+:global chatId "chat_id_Anda";
+
+# Menyiapkan variabel untuk host dan komentar dari netwatch
+:global netwachIP $netwachIP;
+:global komen $komen;
+:global kondisi $kondisi;
+
+# Menyiapkan pesan untuk notifikasi
+:global pesan ("Perhatian ".$netwachIP." (".$komen.") $kondisi ");
+
+/tool fetch url=("https://api.telegram.org/bot" . $botToken . "/sendMessage?chat_id=" . $chatId . "&text=" . $pesan) mode=https keep-result=no;
+
+#tool netwach UP
+:global netwachIP  $host;
+:global komen [/tool netwatch get [find where host=$netwachIP] comment];
+:global kondisi "sudah kembali UP";
+/system/script run UP
+
+#tool netwach down
+:global netwachIP  $host;
+:global komen [/tool netwatch get [find where host=$netwachIP] comment];
+:global kondisi "mengalami DOWN";
+/system/script run UP
