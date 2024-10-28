@@ -29,3 +29,4 @@
 
 /tool fetch url=("https://api.telegram.org/bot" . $botToken . "/sendMessage?chat_id=" . $chatId . "&text=" . $message) mode=https keep-result=no;
 "
+EOF
